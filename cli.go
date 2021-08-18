@@ -26,7 +26,14 @@ func (u *UI) Add(name string, handler func([]string)) {
 // Run displays the menu and calls the appropriate handle functions when a valid command is entered. If the command is not valid, an error prints. Both "help" and "?" print available commands, but can both be overridden by an added command.
 func (u *UI) Run() {
 	for {
+	start:
 		var fc = string(interrogate(u.Name + "> "))
+
+		if fc == "" {
+			u.help()
+			goto start
+		}
+
 		var cmd = parseCmd(fc)
 
 		var validCommand = false
@@ -39,14 +46,18 @@ func (u *UI) Run() {
 		}
 		if !validCommand {
 			if cmd[0] == "help" || cmd[0] == "?" {
-				fmt.Println("Available commands:")
-				for _, c := range u.nArr {
-					fmt.Println("\t" + c)
-				}
+				u.help()
 			} else {
 				fmt.Println("Invalid command.")
 			}
 		}
+	}
+}
+
+func (u *UI) help() {
+	fmt.Println("Available commands:")
+	for _, c := range u.nArr {
+		fmt.Println("\t" + c)
 	}
 }
 
