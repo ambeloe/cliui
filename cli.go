@@ -12,6 +12,7 @@ type UI struct {
 	Name string
 }
 
+// Add adds a function to the list of possible commands
 func (u *UI) Add(name string, handler func([]string)) {
 	//these should never have a different amount of args
 	if u.nArr == nil || u.fArr == nil {
@@ -22,6 +23,7 @@ func (u *UI) Add(name string, handler func([]string)) {
 	u.fArr = append(u.fArr, handler)
 }
 
+// Run displays the menu and calls the appropriate handle functions when a valid command is entered. If the command is not valid, an error prints. Both "help" and "?" print available commands, but can both be overridden by an added command.
 func (u *UI) Run() {
 	for {
 		var fc = string(interrogate(u.Name + "> "))
@@ -36,7 +38,14 @@ func (u *UI) Run() {
 			}
 		}
 		if !validCommand {
-			fmt.Println("Invalid command.")
+			if cmd[0] == "help" || cmd[0] == "?" {
+				fmt.Println("Available commands:")
+				for _, c := range u.nArr {
+					fmt.Println("\t" + c)
+				}
+			} else {
+				fmt.Println("Invalid command.")
+			}
 		}
 	}
 }
